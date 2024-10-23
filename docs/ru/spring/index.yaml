@@ -4,3 +4,5 @@ links:
     href: rate-limitter.md
   - title: Micrometer
     href: micrometer.md
+  - title: Actuator
+    href: actuator.md

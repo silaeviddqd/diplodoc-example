@@ -5,3 +5,5 @@ items:
     href: rate-limitter.md
   - name: Micrometer
     href: micrometer.md
+  - name: Actuator
+    href: actuator.md
