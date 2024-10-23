@@ -4,4 +4,8 @@ items:
   - name: Сети
     include:
       path: network/toc.yaml
+      mode: link
+  - name: Spring
+    include:
+      path: spring/toc.yaml
       mode: link 
