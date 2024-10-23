@@ -1,4 +1,6 @@
-Ошибка ERR_TOO_MANY_REDIRECTS (слишком много перенаправлений) обычно возникает, когда браузер попадает в бесконечный цикл перенаправлений между URL-адресами. В контексте настройки Nginx с использованием proxy_pass это может быть связано с некорректной конфигурацией сервера. Давайте рассмотрим возможные причины и способы их устранения.
+# Ошибка ERR_TOO_MANY_REDIRECTS (слишком много перенаправлений)
+
+Обычно возникает, когда браузер попадает в бесконечный цикл перенаправлений между URL-адресами. В контексте настройки Nginx с использованием proxy_pass это может быть связано с некорректной конфигурацией сервера. Давайте рассмотрим возможные причины и способы их устранения
 
 ## Возможные причины ошибки ERR_TOO_MANY_REDIRECTS
 
@@ -27,9 +29,10 @@ a. Проверьте правила перенаправления
 
 Пример правильной настройки перенаправления HTTP на HTTPS:
 
+```nginx
 server {
     listen 80;
-    server_name example.com www.example.com;
+    server_name example.com <www.example.com>;
 
     # Перенаправление всего HTTP трафика на HTTPS
     return 301 https://$host$request_uri;
@@ -37,7 +40,7 @@ server {
 
 server {
     listen 443 ssl;
-    server_name example.com www.example.com;
+    server_name example.com <www.example.com>;
 
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
@@ -50,12 +53,13 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
-
+```
 
 b. Проверьте настройки proxy_pass и заголовков
 
 Убедитесь, что вы правильно передаёте необходимые заголовки, особенно X-Forwarded-Proto. Это помогает бэкенду определить, используется ли HTTPS, и избежать перенаправлений с HTTP на HTTPS и обратно.
 
+```nginx
 location / {
     proxy_pass http://backend_server;
     proxy_set_header Host $host;
@@ -63,7 +67,7 @@ location / {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
 }
-
+```
 
 ### 2. Проверка настроек бэкенд-приложения
 
@@ -78,9 +82,10 @@ location / {
 
 В settings.py добавьте:
 
+```python
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 ALLOWED_HOSTS = ['example.com', 'www.example.com']
-
+```
 
 ### 3. Очистка кэша браузера и куки
 
@@ -104,9 +109,11 @@ ALLOWED_HOSTS = ['example.com', 'www.example.com']
 - Логи бэкенда:
   - Проверьте логи вашего приложения для выявления перенаправлений или ошибок.
 
-# Пример просмотра логов Nginx
-sudo tail -f /var/log/nginx/access.log /var/log/nginx/error.log
+## Пример просмотра логов Nginx
 
+`
+sudo tail -f /var/log/nginx/access.log /var/log/nginx/error.log
+`
 
 ### 5. Использование инструментов для диагностики
 
@@ -114,8 +121,7 @@ sudo tail -f /var/log/nginx/access.log /var/log/nginx/error.log
 
 Пример команды:
 
-curl -IL http://example.com
-
+`curl -IL http://example.com`
 
 Что означает:
 
@@ -130,51 +136,54 @@ curl -IL http://example.com
 
 Ниже приведён пример конфигурации Nginx для обратного проксирования с корректным перенаправлением HTTP на HTTPS и передачей необходимых заголовков:
 
-# HTTP сервер - перенаправление на HTTPS
-server {
-    listen 80;
-    server_name example.com www.example.com;
+### HTTP сервер - перенаправление на HTTPS
 
-    # Перенаправление всего трафика на HTTPS
-    return 301 https://$host$request_uri;
-}
+```nginx
+    server {
+        listen 80;
+        server_name example.com <www.example.com>;
 
-# HTTPS сервер
-server {
-    listen 443 ssl;
-    server_name example.com www.example.com;
-
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-
-    location / {
-        proxy_pass http://backend_server;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # Дополнительные настройки прокси при необходимости
-        proxy_buffering off;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
+        # Перенаправление всего трафика на HTTPS
+        return 301 https://$host$request_uri;
     }
-}
 
+    ## HTTPS сервер
+
+    server {
+        listen 443 ssl;
+        server_name example.com <www.example.com>;
+
+        ssl_certificate /path/to/cert.pem;
+        ssl_certificate_key /path/to/key.pem;
+
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
+
+        location / {
+            proxy_pass http://backend_server;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # Дополнительные настройки прокси при необходимости
+            proxy_buffering off;
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+        }
+    }
+```
 
 Замечания:
 
 - SSL Сертификаты: Убедитесь, что пути к сертификатам и ключам указаны верно и файлы доступны.
-- Бэкенд-сервер: Замените http://backend_server на адрес вашего бэкенд-приложения (например, http://127.0.0.1:8000).
+- Бэкенд-сервер: Замените http://backend_server на адрес вашего бэкенд-приложения (например, <http://127.0.0.1:8000>).
 - Заголовки: Правильная установка заголовков помогает бэкенду правильно обрабатывать запросы и избегать циклов.
 
 ## Дополнительные рекомендации
 
 - Проверьте поддержку HTTPS на бэкенде: Если ваше приложение само по себе поддерживает HTTPS, убедитесь, что настройки прокси соответствуют этому.
-- Используйте инструменты для отладки: Например, расширения для браузера, такие как Redirect Path (https://redirectpath.demo.kayamon.com/), могут помочь визуализировать цепочку перенаправлений.
+- Используйте инструменты для отладки: Например, расширения для браузера, такие как Redirect Path (<https://redirectpath.demo.kayamon.com/>), могут помочь визуализировать цепочку перенаправлений.
 - Документация приложения: Обратитесь к документации вашего бэкенд-приложения для получения информации о правильной настройке за обратным прокси-сервером.
 
 ## Заключение
@@ -182,5 +191,3 @@ server {
 Ошибка ERR_TOO_MANY_REDIRECTS обычно связана с неправильной конфигурацией перенаправлений, будь то на уровне Nginx или бэкенд-приложения. Следуя приведённым выше рекомендациям, вы сможете определить и устранить причину проблемы. Если после выполнения всех шагов проблема сохраняется, пожалуйста, предоставьте вашу конфигурацию Nginx и дополнительные детали о вашем сервере и приложении, чтобы получить более точную помощь.
 
 ---
-
-Надеюсь, это поможет вам решить проблему! Если у вас есть дополнительные вопросы или требуется помощь с конкретными настройками, не стесняйтесь обращаться.
