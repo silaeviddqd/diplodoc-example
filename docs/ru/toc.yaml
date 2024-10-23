@@ -1,2 +1,7 @@
 title: SIADEV WIKI
 href: index.yaml
+items:
+  - name: Сети
+    include:
+      path: network/toc.yaml
+      mode: link 

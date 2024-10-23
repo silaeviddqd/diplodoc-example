@@ -1,0 +1,5 @@
+title: Сети
+href: index.yaml
+items:
+  - name: ERROR_TOO_MANY_REDIRECTS
+    href: content.md
