@@ -9,3 +9,5 @@ items:
     href: actuator.md
   - name: CORS
     href: cors.md
+  - name: Spring Cloud - глобальная обработка ошибок
+    href: cloud-global-exception-handler.md

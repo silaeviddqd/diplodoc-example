@@ -8,3 +8,5 @@ links:
     href: actuator.md
   - title: CORS
     href: cors.md
+  - title: Spring Cloud - глобальная обработка ошибок
+    href: cloud-global-exception-handler.md
