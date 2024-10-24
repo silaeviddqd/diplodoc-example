@@ -6,3 +6,5 @@ links:
     href: micrometer.md
   - title: Actuator
     href: actuator.md
+  - title: CORS
+    href: cors.md
