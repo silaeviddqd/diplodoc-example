@@ -7,3 +7,5 @@ items:
     href: micrometer.md
   - name: Actuator
     href: actuator.md
+  - name: CORS
+    href: cors.md
