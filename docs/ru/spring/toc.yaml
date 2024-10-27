@@ -11,3 +11,5 @@ items:
     href: cors.md
   - name: Spring Cloud - глобальная обработка ошибок
     href: cloud-global-exception-handler.md
+  - name: Spring Cloud Contracts
+    href: cloud-contracts.md

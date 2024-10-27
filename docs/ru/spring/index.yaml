@@ -10,3 +10,5 @@ links:
     href: cors.md
   - title: Spring Cloud - глобальная обработка ошибок
     href: cloud-global-exception-handler.md
+  - title: Spring Cloud Contracts
+    href: cloud-contracts.md
